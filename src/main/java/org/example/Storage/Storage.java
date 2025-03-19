@@ -2,46 +2,55 @@ package org.example.Storage;
 
 import org.example.Products.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Storage {
 
-    private static Map<Integer,Product> allItems = new HashMap<>();
+    private final Map<Integer, Product> catalog;
 
-    private static int counter = 1;
+    private int counter;
 
-    static {populateStorage();}
-
-    private static void populateStorage() {
-        Product laptop = new Laptop.Builder().id("1").name("Dell XPS")
-                .price(200).warrantyInMonths(24).processor("AMD x329").build();
-        Product TV = new TV.Builder().id("2").name("LG OASIS")
-                .price(1200).warrantyInMonths(36).screenSize("70 Inch").build();
-        Product produce = new Produce.Builder().id("3").name("Potato").price(0.9).freshDay(7).build();
-
-        Product cleaningStuff = new CleaningStuff.Builder().id("4").name("Hand soap").price(3).ingredient("Aloe").build();
-
-        addProduct(laptop);
-        addProduct(TV);
-        addProduct(produce);
-        addProduct(cleaningStuff);
+    public Storage(ProductFactory productFactory) {
+        this.catalog = new ConcurrentHashMap<>();
+        this.counter = 0;
+        populateStorage(productFactory);
     }
 
-    public static void addProduct(Product product) {
-        allItems.put(counter++,product);
+     public void populateStorage(ProductFactory productFactory) {
+        addProduct(productFactory.createLaptop());
+        addProduct(productFactory.createTV());
+        addProduct(productFactory.createProduce());
+        addProduct(productFactory.createCleaningStuff());
     }
 
-    public static Map<Integer,Product> getAllItems(){
-        return allItems;
+
+
+    public void addProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+        if (counter == Integer.MAX_VALUE) {
+            throw new IllegalStateException("Catalog is full");
+        }
+        catalog.put(++counter, product);
     }
 
-    public static int getCounter(){
+    public Map<Integer, Product> getCatalog() {
+        return Collections.unmodifiableMap(catalog);
+    }
+
+    public int getCounter() {
         return counter;
     }
+    public void setCounter(Integer newCounter){counter=newCounter;}
 
-
+    public boolean isWithinCatalogIndex(Integer indexOfOneProduct){
+        return counter>=indexOfOneProduct;
+    }
 
 
 

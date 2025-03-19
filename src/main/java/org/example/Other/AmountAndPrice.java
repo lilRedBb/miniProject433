@@ -1,6 +1,6 @@
 package org.example.Other;
 
-public class AmountAndPrice {
+public abstract class AmountAndPrice {
     private Integer amount;
     private double price;
 
@@ -26,5 +26,13 @@ public class AmountAndPrice {
 
     public String getProductID(){
         return productID;
+    }
+
+    public String displayProductInfo(){
+        return String.format(" %-15d %-10.2f %-15s",
+                this.getAmount(),
+                this.getPrice(),
+                this.getProductID()
+        );
     }
 }

@@ -1,12 +1,19 @@
 package org.example.UI;
 
 import org.example.Products.Product;
+import org.example.Storage.Storage;
 
 import java.util.Map;
 
 public class productBanner {
 
-    public static void showBanner(Map<Integer,Product> allItems){
+    private final Storage storage;
+    public productBanner(Storage storage) {
+        this.storage = storage;
+    }
+
+    public void showBanner(){
+        Map<Integer, Product> allItems = storage.getCatalog();
         System.out.printf("%-15s %-20s  %-10s%n", "Product ID", "Product Name", "Price");
         System.out.println("------------------------------------------------------------------------");
 

@@ -10,6 +10,10 @@ public class Laptop extends Electronics {
 
     }
 
+    public String getProcessor(){
+        return processor;
+    }
+
 
     public static class Builder extends Electronics.Builder<Builder> {
         /**“I (this Builder class) am extending Electronics.Builder<Builder>,”

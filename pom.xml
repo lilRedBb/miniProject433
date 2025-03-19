@@ -8,6 +8,7 @@
     <artifactId>miniProject433</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -20,8 +21,35 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.0.0</version>
+            <scope>test</scope>
+        </dependency>
 
 
     </dependencies>
+    <build>
+        <plugins>
+            <!-- 添加 PITest 插件 -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.0</version> <!-- 使用最新版本 -->
+                <configuration>
+                    <!-- 指定要测试的目标类 -->
+                    <targetClasses>
+                        <param>org.example.*</param> <!-- 修改为你的包名 -->
+                    </targetClasses>
+                    <!-- 指定测试类 -->
+                    <targetTests>
+                        <param>org.example.*Test</param> <!-- 修改为你的测试类命名模式 -->
+                    </targetTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 
 </project>

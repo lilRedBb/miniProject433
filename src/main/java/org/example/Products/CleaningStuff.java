@@ -1,11 +1,14 @@
 package org.example.Products;
 
+import java.util.concurrent.RecursiveTask;
+
 public class CleaningStuff extends Product{
 
     private String ingredient;
 
-    private CleaningStuff(Builder builder) {
+    CleaningStuff(Builder builder) {
         super(builder);
+        this.ingredient = builder.ingredient;
 
     }
 
@@ -33,5 +36,9 @@ public class CleaningStuff extends Product{
         public CleaningStuff build() {
             return new CleaningStuff(this);
         }
+    }
+
+    public String getIngredient(){
+        return ingredient;
     }
 }

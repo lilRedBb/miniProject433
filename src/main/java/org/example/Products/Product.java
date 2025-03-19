@@ -1,30 +1,18 @@
 package org.example.Products;
 
-import org.example.Discount.DiscountStretagy;
-import org.example.Discount.NoDiscount;
+
 
 public abstract class Product  {
     private String id;
     private String name;
     private double price;
 
-    private DiscountStretagy discountStretagy;
-
-    // Constructors, getters, setters
-
-
-//    public Product(String id, String name, double price) {
-//        this.id = id;
-//        this.name = name;
-//        this.price = price;
-//        this.discountStretagy = new NoDiscount();
-//    }
 
     protected Product(Builder<?> builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;
-        this.discountStretagy = builder.discountStretagy != null ? builder.discountStretagy : new NoDiscount();
+
     }
 
     public static abstract class Builder<T extends Builder<T>> {
@@ -38,7 +26,7 @@ public abstract class Product  {
         private String id;
         private String name;
         private double price;
-        private DiscountStretagy discountStretagy = new NoDiscount(); // Default discount
+
 
         //parent class return T in the method, which tells it will return any subclass that extends the parent
         //because, we will be using the subclass to call all these methods, not the parent
@@ -57,10 +45,7 @@ public abstract class Product  {
             return self();
         }
 
-        public T discountStretagy(DiscountStretagy discountStretagy) {
-            this.discountStretagy = discountStretagy;
-            return self();
-        }
+
 
         // This ensures method chaining returns the correct builder type
         protected abstract T self();

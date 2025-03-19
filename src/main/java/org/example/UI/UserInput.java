@@ -1,4 +1,5 @@
 package org.example.UI;
+import org.example.CheckOut.CheckOut;
 import org.example.Cart.UserCart;
 import org.example.Products.Product;
 import org.example.Storage.Storage;
@@ -7,11 +8,15 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class UserInput {
+    private final UserCart userCart;
+    private final Storage storage;
+    private final CheckOut checkOut;
 
-    UserCart userCart = new UserCart();
-    Map<Integer, Product> allItems = Storage.getAllItems();
-
-    int maxCurrentProductID = Storage.getCounter();
+    public UserInput(Storage storage,CheckOut checkOut, UserCart userCart) {
+        this.storage = storage;
+        this.userCart = userCart;
+        this.checkOut = checkOut;
+    }
 
     public void inputInterface(){
         Scanner scanner = new Scanner(System.in);
@@ -20,40 +25,37 @@ public class UserInput {
 
             String input = scanner.nextLine().trim();
             if (input.equalsIgnoreCase("exit")) {
-                System.out.println("Exiting...");
+                handleExitCommand();
                 break;
             }
 
-            String[] parts = input.split("\\s+");
 
-            String command = parts[0];
-            int number = 0;
+            String command = inputHeadParser(input);
 
-            if (parts.length >= 2){
-                try {
-                    number = Integer.parseInt(parts[1]);
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid number format. Please enter a valid integer.");
-                    continue;
-                }
+            int number = inputNumberParser(input);
+            if (number == -1)continue;
 
-            }
 
-            if (number > maxCurrentProductID){
+
+            if (!storage.isWithinCatalogIndex(number)){
                 System.out.println("there is no such product that has this productID");
                 continue;
             }
 
 
+
             switch (command.toLowerCase()) {
                 case "add":
-                    userCart.addToCart(allItems.get(number));
+                    handleAddCommand(number,storage.getCatalog());
                     break;
                 case "del":
-                    userCart.removeFromCart(allItems.get(number));
+                    handleDeleteCommand(number,storage.getCatalog());
                     break;
                 case "show":
-                    userCart.whatsInCart();
+                    handleShowCommand();
+                    break;
+                case "check":
+                    handleCheckCommand(scanner);
                     break;
                 default:
                     System.out.println("Unknown command. Use 'add' or 'del' or 'show or 'check''");
@@ -64,6 +66,75 @@ public class UserInput {
 
 
         }
+
+    void handleAddCommand(int productID, Map<Integer, Product> catalog) {
+
+        userCart.addToCart(catalog.get(productID));
+        System.out.println("item added");
+    }
+
+    void handleDeleteCommand(int productID, Map<Integer, Product> catalog) {
+        userCart.removeFromCart(catalog.get(productID));
+        System.out.println("one item removed");
+    }
+
+    void handleShowCommand() {
+
+        userCart.whatsInCart();
+        System.out.println("current total is: "+ checkOut.getFinalTotal(userCart.whatsMyTotal(), "standard"));
+        System.out.println("Shipment cost: standard = 10$, nextDay = 25$, any order >= 50 will not charge for standard delivery ");
+    }
+
+    void handleCheckCommand(Scanner scanner){
+        System.out.print("type 'yes' for nextDay shipment(25)$, 'no' for standard shipment(10$) ");
+        String shipmentResponse = scanner.nextLine().trim().equalsIgnoreCase("yes")?"nextDay":"standard";
+
+        double finalCost = checkOut.getFinalTotal(userCart.whatsMyTotal(),shipmentResponse );
+        if (finalCost==0 ||finalCost ==100000){
+            System.out.println("your total cost is too small or too big, 1<= your cost < 100000");
+            return;
+        }
+        System.out.printf("your final total is: %-15.2f%n transaction complete", finalCost);
+        userCart.clearCart();
+
+
+    }
+
+    void handleExitCommand(){
+        System.out.println("Exiting...");
+    }
+
+    String inputHeadParser(String input){
+        String[] parts = input.split("\\s+");
+        return parts[0];
+
+    }
+
+    int inputNumberParser(String input){
+        String[] parts = input.split("\\s+");
+        if (parts.length >= 2){
+            try {
+                return Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number format. Please enter a valid integer.");
+                return -1;
+            }
+
+        }
+        return -2;
+
+    }
+    public Storage getStorage() {
+        return storage;
+    }
+
+    public CheckOut getCheckOut() {
+        return checkOut;
+    }
+
+    public UserCart getUserCart() {
+        return userCart;
+    }
 
 
 }

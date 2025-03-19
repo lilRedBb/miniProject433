@@ -1,11 +1,14 @@
 package org.example.Products;
 
+import java.util.concurrent.RecursiveTask;
+
 public class Produce extends Product{
 
     private Integer freshDay;
 
     private Produce(Builder builder) {
         super(builder);
+        this.freshDay = builder.freshDay;
 
     }
 
@@ -33,6 +36,11 @@ public class Produce extends Product{
         public Produce build() {
             return new Produce(this);
         }
+
+
+    }
+    public int getFreshDay(){
+        return freshDay;
     }
 
 
